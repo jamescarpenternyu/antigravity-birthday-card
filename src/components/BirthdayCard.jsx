@@ -21,15 +21,24 @@ export default function BirthdayCard({ onOpenChange }) {
   const [scale, setScale] = useState(1);
   useEffect(() => {
     const handleResize = () => {
-      const fullOpenWidthReq = cardWidth * 3.4; 
-      let targetScale = window.innerWidth / fullOpenWidthReq;
+      // When closed, we only care about cardWidth
+      // When open, we need to accommodate Totoro + Bubble (about 3.4x width)
+      const closedWidthReq = cardWidth + 40; // Small margin
+      const openWidthReq = cardWidth * 3.4;
+      
+      const targetWidth = isOpen ? openWidthReq : closedWidthReq;
+      let targetScale = window.innerWidth / targetWidth;
+      
+      // Constraints
       if (targetScale > 1.2) targetScale = 1.2;
+      if (targetScale < 0.5) targetScale = 0.5; // Don't let it get TOO small
+      
       setScale(targetScale);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [isOpen]); // Re-run when isOpen changes to zoom out/in
 
   const fireBirthdayConfetti = () => {
     if (!bubbleRef.current) return;
@@ -50,7 +59,9 @@ export default function BirthdayCard({ onOpenChange }) {
   };
 
   const handlePan = (event, info) => {
-    let newRot = rotateY.get() + (info.delta.x * 0.4); 
+    // Increase sensitivity slightly on mobile (smaller screens)
+    const sensitivity = window.innerWidth < 600 ? 0.6 : 0.4;
+    let newRot = rotateY.get() + (info.delta.x * sensitivity); 
     if (newRot > 0) newRot = 0;
     if (newRot < -180) newRot = -180;
     rotateY.set(newRot);
@@ -158,7 +169,11 @@ export default function BirthdayCard({ onOpenChange }) {
         alignItems: 'center',
         transform: `scale(${scale})`,
         transformOrigin: 'center center',
-        transition: 'transform 0.5s ease-out'
+        transition: 'transform 0.5s ease-out',
+        touchAction: 'none', // Critical for mobile gestures
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden'
       }}
     >
       <div style={{ width: cardWidth, height: cardHeight, position: 'relative' }}>
@@ -166,7 +181,7 @@ export default function BirthdayCard({ onOpenChange }) {
 
         <motion.div 
           style={{ width: '100%', height: '100%', position: 'absolute' }}
-          animate={{ x: isOpen ? cardWidth / 2 : 0 }}
+          animate={{ x: isOpen ? (cardWidth * 0.4) : 0 }} // Shift slightly less on mobile
           transition={{ type: 'spring', stiffness: 80, damping: 15 }}
         >
 
@@ -205,7 +220,7 @@ export default function BirthdayCard({ onOpenChange }) {
                     padding: '30px 40px',
                     boxShadow: '0 20px 50px rgba(0,0,0,0.4)',
                     border: '8px solid #000',
-                    width: '380px', // Wider to prevent breaks
+                    width: '380px', 
                     zIndex: 20, 
                     transformOrigin: 'left bottom',
                     display: 'flex',

@@ -1,1 +1,23 @@
-/* Cleaned App.css */
+#root {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: fixed; /* Prevents scroll bounce on mobile */
+  top: 0;
+  left: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #ffeef2;
+  overscroll-behavior: none; /* Critical for mobile UX */
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent; /* Removes blue tap highlight on mobile */
+}
