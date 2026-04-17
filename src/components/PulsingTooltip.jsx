@@ -38,10 +38,11 @@ export default function PulsingTooltip({ isCardOpen }) {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: '10px',
     zIndex: 100,
     pointerEvents: 'none',
-    width: '100%',
+    width: 'auto', // Fix: Remove 100% width
     textAlign: 'center'
   };
 
@@ -60,6 +61,7 @@ export default function PulsingTooltip({ isCardOpen }) {
             display: 'flex', 
             flexDirection: isMobile ? 'column-reverse' : 'row', 
             alignItems: 'center', 
+            justifyContent: 'center',
             gap: isMobile ? '10px' : '20px' 
         }}
       >
@@ -71,9 +73,8 @@ export default function PulsingTooltip({ isCardOpen }) {
             borderRight: isMobile ? '30px solid transparent' : `50px solid ${tooltipColor}`, 
             borderBottom: isMobile ? `40px solid ${tooltipColor}` : 'none',
             borderTop: isMobile ? 'none' : '35px solid transparent',
-            borderBottomStyle: isMobile ? 'solid' : 'none',
             position: 'relative',
-            filter: 'drop-shadow(4px 4px 0 #000) drop-shadow(-1px -1px 0 #000)' 
+            filter: 'drop-shadow(3px 3px 0 #000) drop-shadow(-1px -1px 0 #000)' 
         }} />
 
         <span style={{ 
@@ -88,10 +89,12 @@ export default function PulsingTooltip({ isCardOpen }) {
               1px -1px 0 #000,
               -1px 1px 0 #000,
               1px 1px 0 #000,
-              6px 6px 0 rgba(0,0,0,0.8)
+              5px 5px 0 rgba(0,0,0,0.6)
             `,
             letterSpacing: '2px',
-            textAlign: 'center'
+            textAlign: 'center',
+            whiteSpace: isMobile ? 'normal' : 'nowrap',
+            maxWidth: isMobile ? '90vw' : 'none'
         }}>
           {isMobile ? "DRAG THE CARD TO OPEN!" : <>DRAG<br/>TO OPEN!</>}
         </span>
